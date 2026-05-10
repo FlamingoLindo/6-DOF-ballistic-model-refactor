@@ -1,49 +1,49 @@
-Python 3.13.5 (tags/v3.13.5:6cb20a2, Jun 11 2025, 16:15:46) [MSC v.1943 64 bit (AMD64)] on win32
-Enter "help" below or click "Help" above for more information.
-"""
-CÁLCULO DO VALOR ESPERADO PARA ANÁLISE DE CUSTO DE ENGAJAMENTO
+# Python 3.13.5 (tags/v3.13.5:6cb20a2, Jun 11 2025, 16:15:46) [MSC v.1943 64 bit (AMD64)] on win32
+# Enter "help" below or click "Help" above for more information.
+# """
+# CÁLCULO DO VALOR ESPERADO PARA ANÁLISE DE CUSTO DE ENGAJAMENTO
 
-Fórmula:
-E[Custo] = c(1 + (1-p1) + (1-p1)(1-p2) + ... + (1-p1)...(1-pn-1)) + (1-p1)...(1-pn)C
+# Fórmula:
+# E[Custo] = c(1 + (1-p1) + (1-p1)(1-p2) + + (1-p1)...(1-pn-1)) + (1-p1)...(1-pn)C
 
-... Onde:
-... - c: custo de cada munição
-... - C: custo/valor da embarcação (penalidade por falha total)
-... - pi: probabilidade de acerto do projétil i
-... """
-... 
-... import pandas as pd
-... import numpy as np
-... import matplotlib.pyplot as plt
-... 
-... # ============================================================================
-... # CONFIGURAÇÕES - AJUSTE AQUI OS PARÂMETROS
-... # ============================================================================
-... 
-... # Arquivo de entrada com as taxas de acerto
-... ARQUIVO_ENTRADA = r'C:\Users\DELL\AppData\Local\Programs\Microsoft VS Code\segundomonte_carlo_massivo_alpha0_beta0_elev01_azi005.xlsx'
-... 
-... # Parâmetros de custo (em USD - 12/11/2025)
-... CUSTO_MUNICAO = 2000        # c: Custo por munição
-... CUSTO_EMBARCACAO = 289000000  # C: Valor da embarcação/penalidade
-... 
-... # ============================================================================
-... # FUNÇÕES
-... # ============================================================================
-... 
-... def calcular_valor_esperado(probs, custo_municao, custo_embarcacao):
-...     """
-...     Calcula o valor esperado usando a fórmula:
-...     E[Custo] = c(1 + (1-p1) + (1-p1)(1-p2) + ... + (1-p1)...(1-pn-1)) + (1-p1)...(1-pn)C
-...     
-...     Parâmetros:
-...     -----------
-...     probs : array
-...         Array com as probabilidades de acerto de cada disparo
-...     custo_municao : float
-...         Custo de cada munição (c)
-...     custo_embarcacao : float
-...         Custo da embarcação/penalidade (C)
+# Onde:
+# - c: custo de cada munição
+# - C: custo/valor da embarcação (penalidade por falha total)
+# - pi: probabilidade de acerto do projétil i
+# """
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+# ============================================================================
+# CONFIGURAÇÕES - AJUSTE AQUI OS PARÂMETROS
+# ============================================================================
+
+# Arquivo de entrada com as taxas de acerto
+ARQUIVO_ENTRADA = r'cost/segundomonte_carlo_massivo_alpha0_beta0_elev01_azi005.xlsx'
+
+# Parâmetros de custo (em USD - 12/11/2025)
+CUSTO_MUNICAO = 2000        # c: Custo por munição
+CUSTO_EMBARCACAO = 289000000  # C: Valor da embarcação/penalidade
+
+# ============================================================================
+# FUNÇÕES
+# ============================================================================
+
+def calcular_valor_esperado(probs, custo_municao, custo_embarcacao):
+    """
+    Calcula o valor esperado usando a fórmula:
+    E[Custo] = c(1 + (1-p1) + (1-p1)(1-p2) + + (1-p1)...(1-pn-1)) + (1-p1)...(1-pn)C
+    
+    Parâmetros:
+    -----------
+    probs : array
+        Array com as probabilidades de acerto de cada disparo
+    custo_municao : float
+        Custo de cada munição (c)
+    custo_embarcacao : float
+        Custo da embarcação/penalidade (C)
     
     Retorna:
     --------
@@ -52,7 +52,7 @@ E[Custo] = c(1 + (1-p1) + (1-p1)(1-p2) + ... + (1-p1)...(1-pn-1)) + (1-p1)...(1-
     n = len(probs)
     
     # TERMO 1: Custo esperado de munição
-    # c × [1 + (1-p1) + (1-p1)(1-p2) + ... + (1-p1)(1-p2)...(1-pn-1)]
+    # c × [1 + (1-p1) + (1-p1)(1-p2) + + (1-p1)(1-p2)...(1-pn-1)]
     termo1_fatores = []
     prob_acumulada_falha = 1.0
     

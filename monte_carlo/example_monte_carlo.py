@@ -1,3 +1,10 @@
+from classes.real_aero_dynamic_coefficients import RealAerodynamicCoefficients
+from classes.projectiles import  Projectiles
+from classes.weapons import  Weapons
+from classes.enviroment import  Environment
+from classes.ballistic import  BallisticSimulator
+from classes.vessels import  Vessels
+
 # =============================================================================
 # SIMULAÇÃO MONTE CARLO MASSIVA - MÚLTIPLAS EMBARCAÇÕES
 # MODIFICADO: α=0, β=0 FIXOS | PERTURBAÇÕES: Elevação σ=0.1°, Azimute σ=0.05°
@@ -81,7 +88,8 @@ if __name__ == "__main__":
     aero_coeffs = RealAerodynamicCoefficients()
     
     # Criar projétil (Naval 5"/38)
-    projectile = Projectile.from_imperial(
+
+    projectile = Projectiles.from_imperial(
         name="Projétil Naval 5\"/38",
         mass_lb=68.10,
         diameter_in=5.0,
@@ -91,7 +99,7 @@ if __name__ == "__main__":
     )
     
     # Criar arma em terra
-    weapon = Weapon(
+    weapon = Weapons(
         name="Canhão Naval 5\"/38",
         position=(0.0, 10.0, 0.0),
         elevation_deg=45.0,
@@ -263,7 +271,7 @@ if __name__ == "__main__":
         # Criar TODAS as embarcações no mesmo ponto de impacto nominal
         embarcacoes_alvo = {}
         for nome_emb, specs in embarcacoes_specs.items():
-            embarcacoes_alvo[nome_emb] = Vessel(
+            embarcacoes_alvo[nome_emb] = Vessels(
                 name=nome_emb,
                 center_position=(alcance_nominal, desvio_z_nominal),
                 length=specs['length'],

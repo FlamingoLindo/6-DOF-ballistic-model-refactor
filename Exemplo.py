@@ -1,3 +1,9 @@
+from classes.real_aero_dynamic_coefficients import RealAerodynamicCoefficients
+from classes.projectiles import  Projectiles
+from classes.weapons import  Weapons
+from classes.enviroment import  Environment
+from classes.ballistic import  BallisticSimulator
+
 # =============================================================================
 # MAIN DE TESTE - TIRO SEM RANDOMIZAÇÃO EM 39.6°
 # =============================================================================
@@ -13,7 +19,7 @@ if __name__ == "__main__":
     aero_coeffs = RealAerodynamicCoefficients()
     
     # Criar projétil (Naval 5"/38)
-    projectile = Projectile.from_imperial(
+    projectile = Projectiles.from_imperial(
         name="Projétil Naval 5\"/38",
         mass_lb=68.10,
         diameter_in=5.0,
@@ -23,7 +29,7 @@ if __name__ == "__main__":
     )
     
     # Criar arma em terra
-    weapon = Weapon(
+    weapon = Weapons(
         name="Canhão Naval 5\"/38",
         position=(0.0, 10.0, 0.0),
         elevation_deg=43.3,

@@ -1,7 +1,10 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
 # =============================================================================
 # EXEMPLO DE USO - LEITURA E SELEÇÃO DE PONTOS COM DISTÂNCIA ~100m
 # =============================================================================
-
 if __name__ == "__main__":
     
     import time

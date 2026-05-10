@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Carregar resultados
-file_path = 'C:\\Users\\DELL\\Desktop\\IC\\intervalos_confianca_monte_carlo.xlsx'
+file_path = r'confidence_interval/intervalos_confianca_monte_carlo.xlsx'
 df = pd.read_excel(file_path, sheet_name='Todos_Intervalos')
 
 # Converter para proporção

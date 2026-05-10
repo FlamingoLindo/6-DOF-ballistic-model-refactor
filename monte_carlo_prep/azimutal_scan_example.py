@@ -1,7 +1,16 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from classes.real_aero_dynamic_coefficients import RealAerodynamicCoefficients
+from classes.projectiles import  Projectiles
+from classes.weapons import  Weapons
+from classes.enviroment import  Environment
+from classes.ballistic import  BallisticSimulator
+from classes.vessels import  Vessels
+
 # =============================================================================
 # EXEMPLO DE USO - VARREDURA DE ÂNGULOS E POSICIONAMENTO DE ALVO
 # =============================================================================
-
 if __name__ == "__main__":
     
     import time  # Para medir tempo de execução
@@ -14,7 +23,7 @@ if __name__ == "__main__":
     aero_coeffs = RealAerodynamicCoefficients()
     
     # Criar projétil (Naval 5"/38)
-    projectile = Projectile.from_imperial(
+    projectile = Projectiles.from_imperial(
         name="Projétil Naval 5\"/38",
         mass_lb=68.10,
         diameter_in=5.0,
@@ -32,7 +41,7 @@ if __name__ == "__main__":
     print("="*80)
     
     # Criar arma em terra (parâmetros fixos)
-    weapon = Weapon(
+    weapon = Weapons(
         name="Canhão Naval 5\"/38",
         position=(0.0, 10.0, 0.0),  # Altura fixa de 10 metros
         elevation_deg=45.0,          # Será variado no loop
@@ -174,7 +183,7 @@ if __name__ == "__main__":
     print("="*80)
     
     # Criar drone naval na posição de impacto do tiro de maior alcance
-    drone_sea_baby = Vessel(
+    drone_sea_baby = Vessels(
         name="Drone Naval Sea Baby",
         center_position=(x_max, z_max),  # Posição (x, z) do tiro de maior alcance
         length=6.0,      # 6 metros de comprimento
