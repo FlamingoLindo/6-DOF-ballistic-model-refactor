@@ -29,7 +29,7 @@ print("VISUALIZACAO DOS PONTOS SELECIONADOS - ESTILO 3BLUE1BROWN")
 print("="*80)
 
 # CAMINHO DO ARQUIVO
-caminho_arquivo = r'C:\Users\DELL\Downloads\pontos_selecionados_100m.xlsx'
+caminho_arquivo = r'excels/pontos_selecionados_100m-2.xlsx'
 
 try:
     df = pd.read_excel(caminho_arquivo, engine='openpyxl')
@@ -115,8 +115,8 @@ ax1.set_xlim([df['Alcance_x_m'].min()/1000 - x_margin,
 ax1.set_ylim([-y_max - y_margin, y_max + y_margin])
 
 plt.tight_layout()
-plt.savefig('grafico_1_vista_cima.png', dpi=300, facecolor=COLORS['bg'], bbox_inches='tight')
-print("Salvo: grafico_1_vista_cima.png")
+plt.savefig('images/grafico_1_vista_cima.png', dpi=300, facecolor=COLORS['bg'], bbox_inches='tight')
+print("Salvo: images/grafico_1_vista_cima.png")
 plt.show()
 
 # =============================================================================
@@ -184,8 +184,8 @@ if len(df) > 1:
     ax2.set_ylim([y_min - y_range*0.1, y_max + y_range*0.1])
     
     plt.tight_layout()
-    plt.savefig('grafico_2_distancias.png', dpi=300, facecolor=COLORS['bg'], bbox_inches='tight')
-    print("Salvo: grafico_2_distancias.png")
+    plt.savefig('images/grafico_2_distancias.png', dpi=300, facecolor=COLORS['bg'], bbox_inches='tight')
+    print("Salvo: images/grafico_2_distancias.png")
     plt.show()
 
 # =============================================================================
@@ -271,8 +271,8 @@ if len(df) > 1:
             color=COLORS['text'], fontweight='bold')
     
     plt.tight_layout()
-    plt.savefig('grafico_3_histograma.png', dpi=300, facecolor=COLORS['bg'], bbox_inches='tight')
-    print("Salvo: grafico_3_histograma.png")
+    plt.savefig('images/grafico_3_histograma.png', dpi=300, facecolor=COLORS['bg'], bbox_inches='tight')
+    print("Salvo: images/grafico_3_histograma.png")
     plt.show()
 
 # =============================================================================

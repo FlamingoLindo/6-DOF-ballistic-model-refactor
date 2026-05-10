@@ -14,6 +14,7 @@ class RealAerodynamicCoefficients:
     Pré-Computa um grid 2D (Mach x alpha) para rodar mais rapidamente.
     """
     
+    # TODO path
     def __init__(self, csv_path='C:\\Users\\DELL\\Downloads\\Coeficientes que vi 2 casas.csv'):
         """
         Carrega os coeficientes e pré-computa grid 2D.

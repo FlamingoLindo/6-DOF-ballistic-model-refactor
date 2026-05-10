@@ -1,3 +1,2 @@
 # TODO Add stuff in here to run it all...
 # TODO Add all files that get consumed into a directory of their own
-# TODO Instead of having "Enviroment" class, create `.env`?

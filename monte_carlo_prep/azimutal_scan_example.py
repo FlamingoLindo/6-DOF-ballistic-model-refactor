@@ -276,8 +276,8 @@ if __name__ == "__main__":
     })
     
     # Salvar em Excel e CSV
-    excel_path = 'azimutes_otimos_deriva_zero.xlsx'
-    csv_path = 'azimutes_otimos_deriva_zero.csv'
+    excel_path = 'azimutes/azimutes_otimos_deriva_zero.xlsx'
+    csv_path = 'azimutes/azimutes_otimos_deriva_zero.csv'
     
     df_azimutes_otimos.to_excel(excel_path, index=False, engine='openpyxl')
     df_azimutes_otimos.to_csv(csv_path, index=False)

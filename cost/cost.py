@@ -21,7 +21,7 @@ import matplotlib.pyplot as plt
 # ============================================================================
 
 # Arquivo de entrada com as taxas de acerto
-ARQUIVO_ENTRADA = r'cost/segundomonte_carlo_massivo_alpha0_beta0_elev01_azi005.xlsx'
+ARQUIVO_ENTRADA = r'excels/segundomonte_carlo_massivo_alpha0_beta0_elev01_azi005.xlsx'
 
 # Parâmetros de custo (em USD - 12/11/2025)
 CUSTO_MUNICAO = 2000        # c: Custo por munição

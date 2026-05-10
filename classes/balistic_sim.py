@@ -6,7 +6,6 @@ from classes.sim_results import SimulationResults
 import warnings
 warnings.filterwarnings('ignore')
 
-
 # =============================================================================
 # CLASSE SIMULADOR BALÍSTICO
 # =============================================================================

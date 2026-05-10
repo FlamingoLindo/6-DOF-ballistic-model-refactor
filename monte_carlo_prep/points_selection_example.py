@@ -7,8 +7,6 @@ import matplotlib.pyplot as plt
 # =============================================================================
 if __name__ == "__main__":
     
-    import time
-    
     print("="*80)
     print("ANÁLISE DE PONTOS COM ESPAÇAMENTO DE ~100m")
     print("="*80)

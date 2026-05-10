@@ -31,7 +31,7 @@ if __name__ == "__main__":
     # CARREGAR PONTOS SELECIONADOS
     # =========================================================================
     print("\nCarregando pontos selecionados...")
-    excel_selecionados = r'C:\Users\DELL\Downloads\pontos_selecionados_100m.xlsx'
+    excel_selecionados = r'excels/pontos_selecionados_100m.xlsx'
     
     try:
         df_pontos = pd.read_excel(excel_selecionados, engine='openpyxl')

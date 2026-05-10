@@ -133,7 +133,7 @@ class SimulationResults:
         print(f"  Máximo: {np.max(self.alpha_traj):.2f}°")
         print(f"  Médio: {np.mean(self.alpha_traj):.2f}°")
     
-    def plot_trajectory_3d(self, save_path='01_trajectory_3d_white.png'):
+    def plot_trajectory_3d(self, save_path='images/01_trajectory_3d_white.png'):
         """Gráfico 1: Trajetória 3D completa."""
         fig = plt.figure(figsize=(12, 10), facecolor=self.COLORS['bg'])
         ax = fig.add_subplot(111, projection='3d')
@@ -181,7 +181,7 @@ class SimulationResults:
         print(f"✓ Gráfico salvo: {save_path}")
         plt.show()
     
-    def plot_top_view(self, save_path='02_top_view_white.png'):
+    def plot_top_view(self, save_path='images/02_top_view_white.png'):
         """Gráfico 2: Vista de cima (deriva lateral)."""
         fig, ax = plt.subplots(figsize=(14, 6), facecolor=self.COLORS['bg'])
         self._setup_3b1b_style(ax, 'Vista de Cima - Deriva Lateral')
@@ -215,7 +215,7 @@ class SimulationResults:
         print(f"✓ Gráfico salvo: {save_path}")
         plt.show()
     
-    def plot_side_view(self, save_path='03_side_view_white.png'):
+    def plot_side_view(self, save_path='images/03_side_view_white.png'):
         """Gráfico 3: Vista lateral (perfil vertical)."""
         fig, ax = plt.subplots(figsize=(14, 6), facecolor=self.COLORS['bg'])
         self._setup_3b1b_style(ax, 'Vista Lateral - Perfil Vertical')
@@ -253,7 +253,7 @@ class SimulationResults:
         print(f"✓ Gráfico salvo: {save_path}")
         plt.show()
     
-    def plot_velocity_vs_time(self, save_path='04_velocity_vs_time_white.png'):
+    def plot_velocity_vs_time(self, save_path='images/04_velocity_vs_time_white.png'):
         """Gráfico 4a: Velocidade vs Tempo."""
         fig, ax = plt.subplots(figsize=(14, 8), facecolor=self.COLORS['bg'])
         self._setup_3b1b_style(ax, 'Velocidade vs Tempo')
@@ -280,7 +280,7 @@ class SimulationResults:
         print(f"✓ Gráfico salvo: {save_path}")
         plt.show()
     
-    def plot_velocity_vs_distance(self, save_path='05_velocity_vs_distance_white.png'):
+    def plot_velocity_vs_distance(self, save_path='images/05_velocity_vs_distance_white.png'):
         """Gráfico 4b: Velocidade vs Distância."""
         fig, ax = plt.subplots(figsize=(14, 8), facecolor=self.COLORS['bg'])
         self._setup_3b1b_style(ax, 'Velocidade vs Distância')
@@ -307,7 +307,7 @@ class SimulationResults:
         print(f"✓ Gráfico salvo: {save_path}")
         plt.show()
     
-    def plot_axis_orientation_vs_time(self, save_path='06_axis_orientation_vs_time_white.png'):
+    def plot_axis_orientation_vs_time(self, save_path='images/06_axis_orientation_vs_time_white.png'):
         """Gráfico 5a: Orientação do eixo i' vs Tempo."""
         fig, ax = plt.subplots(figsize=(14, 8), facecolor=self.COLORS['bg'])
         self._setup_3b1b_style(ax, "Evolução do Eixo Polar i' vs Tempo")
@@ -335,7 +335,7 @@ class SimulationResults:
         print(f"✓ Gráfico salvo: {save_path}")
         plt.show()
     
-    def plot_axis_orientation_vs_distance(self, save_path='07_axis_orientation_vs_distance_white.png'):
+    def plot_axis_orientation_vs_distance(self, save_path='images/07_axis_orientation_vs_distance_white.png'):
         """Gráfico 5b: Orientação do eixo i' vs Distância."""
         fig, ax = plt.subplots(figsize=(14, 8), facecolor=self.COLORS['bg'])
         self._setup_3b1b_style(ax, "Evolução do Eixo Polar i' vs Distância")
@@ -363,7 +363,7 @@ class SimulationResults:
         print(f"✓ Gráfico salvo: {save_path}")
         plt.show()
     
-    def plot_angular_momentum_vs_time(self, save_path='08_angular_momentum_vs_time_white.png'):
+    def plot_angular_momentum_vs_time(self, save_path='images/08_angular_momentum_vs_time_white.png'):
         """Gráfico 6a: Momento Angular vs Tempo."""
         fig, ax = plt.subplots(figsize=(14, 8), facecolor=self.COLORS['bg'])
         self._setup_3b1b_style(ax, 'Momento Angular vs Tempo')
@@ -390,7 +390,7 @@ class SimulationResults:
         print(f"✓ Gráfico salvo: {save_path}")
         plt.show()
     
-    def plot_angular_momentum_vs_distance(self, save_path='09_angular_momentum_vs_distance_white.png'):
+    def plot_angular_momentum_vs_distance(self, save_path='images/09_angular_momentum_vs_distance_white.png'):
         """Gráfico 6b: Momento Angular vs Distância."""
         fig, ax = plt.subplots(figsize=(14, 8), facecolor=self.COLORS['bg'])
         self._setup_3b1b_style(ax, 'Momento Angular vs Distância')
@@ -417,7 +417,7 @@ class SimulationResults:
         print(f"✓ Gráfico salvo: {save_path}")
         plt.show()
     
-    def plot_angle_of_attack_vs_time(self, save_path='10_angle_of_attack_vs_time_white.png'):
+    def plot_angle_of_attack_vs_time(self, save_path='images/10_angle_of_attack_vs_time_white.png'):
         """Gráfico 7a: Ângulo de Ataque vs Tempo."""
         fig, ax = plt.subplots(figsize=(14, 8), facecolor=self.COLORS['bg'])
         self._setup_3b1b_style(ax, 'Ângulo de Ataque vs Tempo')
@@ -449,7 +449,7 @@ class SimulationResults:
         print(f"✓ Gráfico salvo: {save_path}")
         plt.show()
     
-    def plot_angle_of_attack_vs_distance(self, save_path='11_angle_of_attack_vs_distance_white.png'):
+    def plot_angle_of_attack_vs_distance(self, save_path='images/11_angle_of_attack_vs_distance_white.png'):
         """Gráfico 7b: Ângulo de Ataque vs Distância."""
         fig, ax = plt.subplots(figsize=(14, 8), facecolor=self.COLORS['bg'])
         self._setup_3b1b_style(ax, 'Ângulo de Ataque vs Distância')
@@ -481,7 +481,7 @@ class SimulationResults:
         print(f"✓ Gráfico salvo: {save_path}")
         plt.show()
     
-    def plot_mach_vs_time(self, save_path='12_mach_vs_time_white.png'):
+    def plot_mach_vs_time(self, save_path='images/12_mach_vs_time_white.png'):
         """Gráfico 8a: Número de Mach vs Tempo."""
         fig, ax = plt.subplots(figsize=(14, 8), facecolor=self.COLORS['bg'])
         self._setup_3b1b_style(ax, 'Número de Mach vs Tempo')
@@ -513,7 +513,7 @@ class SimulationResults:
         print(f"✓ Gráfico salvo: {save_path}")
         plt.show()
     
-    def plot_mach_vs_distance(self, save_path='13_mach_vs_distance_white.png'):
+    def plot_mach_vs_distance(self, save_path='images/13_mach_vs_distance_white.png'):
         """Gráfico 8b: Número de Mach vs Distância."""
         fig, ax = plt.subplots(figsize=(14, 8), facecolor=self.COLORS['bg'])
         self._setup_3b1b_style(ax, 'Número de Mach vs Distância')
@@ -545,7 +545,7 @@ class SimulationResults:
         print(f"✓ Gráfico salvo: {save_path}")
         plt.show()
     
-    def plot_spin_rate_vs_time(self, save_path='14_spin_rate_vs_time_white.png'):
+    def plot_spin_rate_vs_time(self, save_path='images/14_spin_rate_vs_time_white.png'):
         """Gráfico 9a: Taxa de Spin vs Tempo."""
         fig, ax = plt.subplots(figsize=(14, 8), facecolor=self.COLORS['bg'])
         self._setup_3b1b_style(ax, 'Taxa de Spin vs Tempo')
@@ -572,7 +572,7 @@ class SimulationResults:
         print(f"✓ Gráfico salvo: {save_path}")
         plt.show()
     
-    def plot_spin_rate_vs_distance(self, save_path='15_spin_rate_vs_distance_white.png'):
+    def plot_spin_rate_vs_distance(self, save_path='images/15_spin_rate_vs_distance_white.png'):
         """Gráfico 9b: Taxa de Spin vs Distância."""
         fig, ax = plt.subplots(figsize=(14, 8), facecolor=self.COLORS['bg'])
         self._setup_3b1b_style(ax, 'Taxa de Spin vs Distância')
@@ -600,7 +600,7 @@ class SimulationResults:
         plt.show()
     
     
-    def plot_altitude_vs_time(self, save_path='16_altitude_vs_time_white.png'):
+    def plot_altitude_vs_time(self, save_path='images/16_altitude_vs_time_white.png'):
         """Gráfico 10: Altura (Altitude) vs Tempo."""
         fig, ax = plt.subplots(figsize=(14, 8), facecolor=self.COLORS['bg'])
         self._setup_3b1b_style(ax, 'Altitude vs Tempo')
@@ -637,7 +637,7 @@ class SimulationResults:
         print(f"✓ Gráfico salvo: {save_path}")
         plt.show()
     
-    def plot_lateral_drift_vs_time(self, save_path='17_lateral_drift_vs_time_white.png'):
+    def plot_lateral_drift_vs_time(self, save_path='images/17_lateral_drift_vs_time_white.png'):
         """Gráfico 11: Desvio Lateral vs Tempo."""
         fig, ax = plt.subplots(figsize=(14, 8), facecolor=self.COLORS['bg'])
         self._setup_3b1b_style(ax, 'Desvio Lateral vs Tempo')
@@ -678,7 +678,7 @@ class SimulationResults:
         print(f"✓ Gráfico salvo: {save_path}")
         plt.show()
     
-    def plot_range_vs_time(self, save_path='18_range_vs_time_white.png'):
+    def plot_range_vs_time(self, save_path='images/18_range_vs_time_white.png'):
         """Gráfico 12: Alcance vs Tempo."""
         fig, ax = plt.subplots(figsize=(14, 8), facecolor=self.COLORS['bg'])
         self._setup_3b1b_style(ax, 'Alcance vs Tempo')
