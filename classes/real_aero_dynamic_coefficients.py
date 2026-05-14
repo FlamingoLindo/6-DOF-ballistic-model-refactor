@@ -160,11 +160,12 @@ class RealAerodynamicCoefficients:
         coeffs = {}
 
         # Coeficientes que necessitam de alpha
-        coeffs['CD_total'] = float(self.interp_2d['CD_total'](mach, alpha_rad))
+        coeffs['CD_total'] = float(
+            self.interp_2d['CD_total'](mach, alpha_rad, grid=False))
         coeffs['CNP_total'] = float(
-            self.interp_2d['CNP_total'](mach, alpha_rad))
+            self.interp_2d['CNP_total'](mach, alpha_rad, grid=False))
         coeffs['CLA_total'] = float(
-            self.interp_2d['CLA_total'](mach, alpha_rad))
+            self.interp_2d['CLA_total'](mach, alpha_rad, grid=False))
 
         # Coeficientes fixos
         for name in ['CNA', 'CMA', 'CMQ', 'CLP', 'CYP']:

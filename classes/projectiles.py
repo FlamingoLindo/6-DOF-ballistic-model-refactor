@@ -1,8 +1,10 @@
 """
-_summary_
+Módulo para modelagem de projéteis navais e cálculo de propriedades balísticas.
 
-Returns:
-_type_: _description_
+Este módulo define a classe `Projectiles`, responsável por representar
+projéteis com características físicas, geométricas e rotacionais,
+incluindo suporte para conversão de unidades imperiais e cálculo
+de spin inicial baseado no rifling do canhão.
 """
 
 import numpy as np
@@ -17,8 +19,28 @@ warnings.filterwarnings('ignore')
 
 class Projectiles:
     """
-    Classe que representa um projétil naval com todas suas características físicas
-    e balísticas.
+    Representa um projétil naval com propriedades físicas e balísticas.
+
+    A classe armazena informações como massa, diâmetro, momentos de inércia
+    e características do rifling, além de fornecer métodos auxiliares
+    para conversão de unidades e cálculos balísticos básicos.
+
+    Attributes
+    ----------
+    name : str
+        Nome ou identificação do projétil.
+    mass : float
+        Massa do projétil em quilogramas.
+    diameter : float
+        Diâmetro do projétil em metros.
+    i_p : float
+        Momento de inércia polar em kg·m².
+    i_t : float
+        Momento de inércia transversal em kg·m².
+    rifling_twist : float
+        Taxa de rifling em calibres por volta completa.
+    s : float
+        Área de referência transversal do projétil em m².
     """
 
     def __init__(self, name="Projétil Naval", mass_kg=None, diameter_m=None,
@@ -85,16 +107,20 @@ class Projectiles:
 
     def calculate_initial_spin(self, muzzle_velocity):
         """
-        Calcula o spin inicial baseado no rifling do canhão.
+        Calcula o spin angular inicial do projétil.
 
-        Parâmetros:
-        -----------
-        muzzle_velocity_mps : float
-            Velocidade na boca do canhão em m/s
+        O cálculo é baseado na velocidade na boca do canhão e na
+        taxa de rifling do tubo.
 
-        Retorna:
-        --------
-        float : spin inicial em rad/s
+        Parameters
+        ----------
+        muzzle_velocity : float
+            Velocidade na boca do canhão em m/s.
+
+        Returns
+        -------
+        float
+            Velocidade angular inicial do projétil em rad/s.
         """
         n = self.rifling_twist
         p0 = (2 * np.pi * muzzle_velocity) / (n * self.diameter)

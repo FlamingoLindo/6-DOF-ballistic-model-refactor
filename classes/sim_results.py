@@ -84,9 +84,9 @@ class SimulationResults:
         # Ângulo de ataque
         self.alpha_traj = []
         for idx in range(len(self.t)):
-            v1 = self.v1[idx] - self.simulator.environment.W1
-            v2 = self.v2[idx] - self.simulator.environment.W2
-            v3 = self.v3[idx] - self.simulator.environment.W3
+            v1 = self.v1[idx] - self.simulator.environment.w1
+            v2 = self.v2[idx] - self.simulator.environment.w2
+            v3 = self.v3[idx] - self.simulator.environment.w3
             # v = sqrt(v1*v1 + v2*v2 + v3*v3) + 1e-12
 
             v_along = v1*self.i1[idx] + v2*self.i2[idx] + v3*self.i3[idx]

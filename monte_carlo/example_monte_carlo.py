@@ -1,3 +1,6 @@
+"""
+_summary_
+"""
 from classes.real_aero_dynamic_coefficients import RealAerodynamicCoefficients
 from classes.projectiles import Projectiles
 from classes.weapons import Weapons
@@ -11,7 +14,10 @@ from classes.vessels import Vessels
 # ORDEM: ELEVAÇÃO DECRESCENTE (maior alcance até -1.5°)
 # =============================================================================
 
-if __name__ == "__main__":
+
+def eg_monte_carlo():
+    """_summary_
+    """
 
     import time
     import datetime
@@ -67,17 +73,17 @@ if __name__ == "__main__":
 
     n_pontos_total = len(df_pontos_filtrados)
 
-    print(f"\n  Pontos selecionados para simulação:")
+    print("\nPontos selecionados para simulação:")
     print(
-        f"    Elevação INICIAL: {df_pontos_filtrados.iloc[0]['Elevacao_deg']:.1f}° (maior)")
+        f"Elevação INICIAL: {df_pontos_filtrados.iloc[0]['Elevacao_deg']:.1f}° (maior)")
     print(
-        f"    Elevação FINAL: {df_pontos_filtrados.iloc[-1]['Elevacao_deg']:.1f}° (menor)")
-    print(f"    Total de pontos: {n_pontos_total}")
+        f"Elevação FINAL: {df_pontos_filtrados.iloc[-1]['Elevacao_deg']:.1f}° (menor)")
+    print(f"Total de pontos: {n_pontos_total}")
     print(
-        f"    Alcance inicial: {df_pontos_filtrados.iloc[0]['Alcance_x_m']:.1f} m")
+        f"Alcance inicial: {df_pontos_filtrados.iloc[0]['Alcance_x_m']:.1f} m")
     print(
-        f"    Alcance final: {df_pontos_filtrados.iloc[-1]['Alcance_x_m']:.1f} m")
-    print(f"    ORDEM: Decrescente (ângulos positivos → negativos)")
+        f"Alcance final: {df_pontos_filtrados.iloc[-1]['Alcance_x_m']:.1f} m")
+    print("ORDEM: Decrescente (ângulos positivos → negativos)")
 
     # =========================================================================
     # CONFIGURAÇÃO DO SIMULADOR
@@ -87,7 +93,8 @@ if __name__ == "__main__":
     print("="*80)
 
     # NOTA: Aqui você deve importar suas classes
-    # from seu_modulo import RealAerodynamicCoefficients, Projectile, Weapon, Environment, BallisticSimulator, Vessel
+    # from seu_modulo import RealAerodynamicCoefficients,
+    # Projectile, Weapon, Environment, BallisticSimulator, Vessel
 
     # Carregar coeficientes aerodinâmicos
     aero_coeffs = RealAerodynamicCoefficients()
@@ -98,8 +105,8 @@ if __name__ == "__main__":
         name="Projétil Naval 5\"/38",
         mass_lb=68.10,
         diameter_in=5.0,
-        I_P_lbin2=240.9,
-        I_T_lbin2=2619.0,
+        i_p_lbin2=240.9,
+        i_t_lbin2=2619.0,
         rifling_twist_calibers=25.0
     )
 
@@ -118,9 +125,9 @@ if __name__ == "__main__":
     environment = Environment(
         rho=1.225,
         g=9.81,
-        W1=0.0,
-        W2=0.0,
-        W3=0.0
+        w1=0.0,
+        w2=0.0,
+        w3=0.0
     )
 
     # Criar simulador
@@ -149,29 +156,27 @@ if __name__ == "__main__":
     n_simulacoes_total = n_pontos_total * n_simulacoes_por_ponto
 
     print(f"\n{'='*80}")
-    print(f"CONFIGURAÇÃO MONTE CARLO MASSIVA (MODIFICADO)")
+    print("CONFIGURAÇÃO MONTE CARLO MASSIVA (MODIFICADO)")
     print(f"{'='*80}")
-    print(f"  Pontos a simular: {n_pontos_total}")
-    print(f"  Simulações por ponto: {n_simulacoes_por_ponto}")
-    print(f"  Total de simulações: {n_simulacoes_total:,}")
-    print(f"  ")
-    print(f"  MODIFICAÇÃO APLICADA:")
-    print(f"    • α (alpha) = {alpha0_deg_fixo}° (FIXO)")
-    print(f"    • β (beta) = {beta0_deg_fixo}° (FIXO)")
-    print(f"    • Perturbação ELEVAÇÃO: Normal(μ=0, σ={sigma_elevacao}°)")
-    print(f"    • Perturbação AZIMUTE: Normal(μ=0, σ={sigma_azimute}°)")
-    print(f"  ")
-    print(f"  Seed: {seed_mc}")
-    print(f"  Backup automático: A cada 30 minutos")
-    print(f"  TOLERÂNCIAS ORIGINAIS:")
-    print(f"    • rtol=1e-7, atol=1e-8 (máxima precisão)")
-    print(f"    • Sem otimizações de velocidade")
+    print(f"Pontos a simular: {n_pontos_total}")
+    print(f" Simulações por ponto: {n_simulacoes_por_ponto}")
+    print(f"Total de simulações: {n_simulacoes_total:,}")
+    print("\nMODIFICAÇÃO APLICADA:")
+    print(f"• α (alpha) = {alpha0_deg_fixo}° (FIXO)")
+    print(f"• β (beta) = {beta0_deg_fixo}° (FIXO)")
+    print(f"• Perturbação ELEVAÇÃO: Normal(μ=0, σ={sigma_elevacao}°)")
+    print(f"• Perturbação AZIMUTE: Normal(μ=0, σ={sigma_azimute}°)")
+    print(f"\nSeed: {seed_mc}")
+    print("Backup automático: A cada 30 minutos")
+    print("TOLERÂNCIAS ORIGINAIS:")
+    print("• rtol=1e-7, atol=1e-8 (máxima precisão)")
+    print("• Sem otimizações de velocidade")
 
     # =========================================================================
     # DEFINIR MÚLTIPLAS EMBARCAÇÕES ALVO
     # =========================================================================
     print(f"\n{'='*80}")
-    print(f"DEFININDO EMBARCAÇÕES ALVO")
+    print("DEFININDO EMBARCAÇÕES ALVO")
     print(f"{'='*80}")
 
     # Baseado nos links da Wikipedia (dimensões em metros)
@@ -217,7 +222,7 @@ if __name__ == "__main__":
     # GERAR TODAS AS PERTURBAÇÕES DE UMA VEZ
     # =========================================================================
     print(f"\n{'='*80}")
-    print(f"GERANDO TODAS AS PERTURBAÇÕES (ELEVAÇÃO E AZIMUTE)")
+    print("GERANDO TODAS AS PERTURBAÇÕES (ELEVAÇÃO E AZIMUTE)")
     print(f"{'='*80}")
 
     np.random.seed(seed_mc)
@@ -236,11 +241,12 @@ if __name__ == "__main__":
 
     print(f"✓ Perturbações geradas em {tempo_geracao:.2f}s!")
     print(
-        f"  ΔElevação: μ={delta_elevacao_todas.mean():.6f}°, σ={delta_elevacao_todas.std():.6f}°")
+        f"ΔElevação: μ={delta_elevacao_todas.mean():.6f}°, σ={delta_elevacao_todas.std():.6f}°")
     print(
-        f"  ΔAzimute: μ={delta_azimute_todas.mean():.6f}°, σ={delta_azimute_todas.std():.6f}°")
+        f"ΔAzimute: μ={delta_azimute_todas.mean():.6f}°, σ={delta_azimute_todas.std():.6f}°")
     print(
-        f"  Memória ocupada: ~{(delta_elevacao_todas.nbytes + delta_azimute_todas.nbytes) / (1024**2):.2f} MB")
+        f"Memória ocupada: ~{(delta_elevacao_todas.nbytes + delta_azimute_todas.nbytes)
+                             / (1024**2):.2f} MB")
 
     # =========================================================================
     # PREPARAR ARMAZENAMENTO DE RESULTADOS
@@ -248,19 +254,19 @@ if __name__ == "__main__":
     resultados_resumo = []
 
     # Arquivos de saída (com novos nomes refletindo as mudanças)
-    arquivo_final = 'segundomonte_carlo_massivo_alpha0_beta0_elev03_azi01.xlsx'
-    arquivo_backup = 'segundomonte_carlo_massivo_alpha0_beta0_elev03_azi01_backup.xlsx'
+    arquivo_final = r'excels/segundomonte_carlo_massivo_alpha0_beta0_elev01_azi005.xlsx'
+    arquivo_backup = r'excels/segundomonte_carlo_massivo_alpha0_beta0_elev03_azi01_backup.xlsx'
 
     # =========================================================================
     # LOOP PRINCIPAL: SIMULAR TODOS OS PONTOS
     # =========================================================================
     print(f"\n{'='*80}")
-    print(f"INICIANDO SIMULAÇÃO MASSIVA (α=0, β=0, ΔElev σ=0.3°, ΔAzi σ=0.1°)")
+    print("INICIANDO SIMULAÇÃO MASSIVA (α=0, β=0, ΔElev σ=0.3°, ΔAzi σ=0.1°)")
     print(f"{'='*80}")
 
     tempo_inicio_total = time.time()
     tempo_ultimo_backup = time.time()
-    intervalo_backup = 30 * 60  # 30 minutos em segundos
+    INTERVALO_BACKUP = 30 * 60  # 30 minutos em segundos
 
     contador_sim_global = 0
 
@@ -292,7 +298,7 @@ if __name__ == "__main__":
             )
 
         # Arrays para resultados deste ponto (para cada embarcação)
-        acertos_por_embarcacao = {nome: 0 for nome in embarcacoes_specs.keys()}
+        acertos_por_embarcacao = {nome: 0 for nome in embarcacoes_specs}
         erros_x_ponto = []
         erros_z_ponto = []
         distancias_erro_ponto = []
@@ -355,9 +361,9 @@ if __name__ == "__main__":
                 tempos_voo_ponto.append(result.tempo_voo)
                 n_validas_ponto += 1
 
-            except Exception as e:
-                # Simulação falhou, apenas continuar
-                pass
+            except (ValueError, RuntimeError, OverflowError) as error:
+                print(f"Simulação falhou: {error}")
+                continue
 
             # Print de progresso a cada 50 simulações
             if (sim + 1) % 50 == 0:
@@ -413,13 +419,15 @@ if __name__ == "__main__":
 
             print(f"\n  ✓ Ponto concluído em {tempo_total_ponto:.1f}s")
             print(
-                f"    CEP50: {np.median(distancias_array):.2f}m | CEP90: {np.percentile(distancias_array, 90):.2f}m")
-            print(f"    Taxas de acerto:")
-            for nome_emb in embarcacoes_specs.keys():
+                f"CEP50: {np.median(distancias_array):.2f}m |\
+                      CEP90: {np.percentile(distancias_array, 90):.2f}m")
+            print("Taxas de acerto:")
+            for nome_emb in embarcacoes_specs:
                 taxa = (
                     acertos_por_embarcacao[nome_emb] / n_validas_ponto) * 100
                 print(
-                    f"      • {nome_emb}: {taxa:.1f}% ({acertos_por_embarcacao[nome_emb]}/{n_validas_ponto})")
+                    f"• {nome_emb}: {taxa:.1f}%\
+                        ({acertos_por_embarcacao[nome_emb]}/{n_validas_ponto})")
 
         # Estimativa de tempo restante
         tempo_total_decorrido = time.time() - tempo_inicio_total
@@ -429,19 +437,21 @@ if __name__ == "__main__":
             tempo_estimado_restante = tempo_medio_por_ponto * pontos_restantes
 
             print(
-                f"\n  Progresso global: {numero_ponto}/{n_pontos_total} pontos ({(numero_ponto/n_pontos_total)*100:.1f}%)")
-            print(f"  Tempo decorrido: {tempo_total_decorrido/60:.1f} min")
+                f"\nProgresso global: {numero_ponto}/{n_pontos_total}\
+                    pontos ({(numero_ponto/n_pontos_total)*100:.1f}%)")
+            print(f"Tempo decorrido: {tempo_total_decorrido/60:.1f} min")
             print(
-                f"  Tempo estimado restante: {tempo_estimado_restante/60:.1f} min")
+                f"Tempo estimado restante: {tempo_estimado_restante/60:.1f} min")
             print(
-                f"  Tempo total estimado: {(tempo_total_decorrido + tempo_estimado_restante)/60:.1f} min")
+                f"Tempo total estimado: \
+                    {(tempo_total_decorrido + tempo_estimado_restante)/60:.1f} min")
 
         # =====================================================================
         # BACKUP AUTOMÁTICO A CADA 30 MINUTOS
         # =====================================================================
         tempo_desde_ultimo_backup = time.time() - tempo_ultimo_backup
 
-        if tempo_desde_ultimo_backup >= intervalo_backup:
+        if tempo_desde_ultimo_backup >= INTERVALO_BACKUP:
             print(f"\n  {'='*76}")
             print(
                 f"  SALVANDO BACKUP AUTOMÁTICO ({datetime.datetime.now().strftime('%H:%M:%S')})")
@@ -464,7 +474,7 @@ if __name__ == "__main__":
     tempo_total_final = time.time() - tempo_inicio_total
 
     print(f"\n{'='*80}")
-    print(f"SIMULAÇÃO MASSIVA CONCLUÍDA!")
+    print("SIMULAÇÃO MASSIVA CONCLUÍDA!")
     print(f"{'='*80}")
     print(
         f"  Tempo total: {tempo_total_final/60:.1f} minutos ({tempo_total_final/3600:.2f} horas)")
@@ -475,7 +485,7 @@ if __name__ == "__main__":
         f"  Tempo médio por simulação: {tempo_total_final/n_simulacoes_total:.3f}s")
 
     print(f"\n{'='*80}")
-    print(f"SALVANDO RESULTADOS FINAIS")
+    print("SALVANDO RESULTADOS FINAIS")
     print(f"{'='*80}")
 
     df_resultados_final = pd.DataFrame(resultados_resumo)
@@ -493,7 +503,7 @@ if __name__ == "__main__":
     # ESTATÍSTICAS GLOBAIS POR EMBARCAÇÃO
     # =========================================================================
     print(f"\n{'='*80}")
-    print(f"ESTATÍSTICAS GLOBAIS POR EMBARCAÇÃO")
+    print("ESTATÍSTICAS GLOBAIS POR EMBARCAÇÃO")
     print(f"{'='*80}")
 
     for nome_emb, specs in embarcacoes_specs.items():
@@ -509,7 +519,7 @@ if __name__ == "__main__":
         print(
             f"    Desvio padrão: {df_resultados_final[coluna_taxa].std():.2f}%")
 
-    print(f"\n  CEP (independente de embarcação):")
+    print("\nCEP (independente de embarcação):")
     print(f"    CEP50 médio: {df_resultados_final['CEP50_m'].mean():.2f}m")
     print(f"    CEP90 médio: {df_resultados_final['CEP90_m'].mean():.2f}m")
 
@@ -517,11 +527,11 @@ if __name__ == "__main__":
     # GRÁFICOS DE RESUMO
     # =========================================================================
     print(f"\n{'='*80}")
-    print(f"GERANDO GRÁFICOS DE RESUMO")
+    print("GERANDO GRÁFICOS DE RESUMO")
     print(f"{'='*80}")
 
     # Figura 1: Comparação de taxas de acerto por embarcação
-    fig1, axes1 = plt.subplots(2, 3, figsize=(20, 12))
+    _fig1, axes1 = plt.subplots(2, 3, figsize=(20, 12))
     axes1 = axes1.flatten()
 
     for idx, (nome_emb, specs) in enumerate(embarcacoes_specs.items()):
@@ -538,16 +548,17 @@ if __name__ == "__main__":
         ax.axhline(y=50, color='r', linestyle='--', alpha=0.5)
         ax.set_ylim([0, 100])
 
-    plt.suptitle(f'Taxa de Acerto por Embarcação vs Elevação\n' +
-                 f'α=0°, β=0° | ΔElev σ=0.3°, ΔAzi σ=0.1° | {n_pontos_total} pontos | {n_simulacoes_total:,} simulações',
+    plt.suptitle('Taxa de Acerto por Embarcação vs Elevação\n' +
+                 f'α=0°, β=0° | ΔElev σ=0.3°, ΔAzi σ=0.1° |\
+                      {n_pontos_total} pontos | {n_simulacoes_total:,} simulações',
                  fontsize=14, fontweight='bold')
     plt.tight_layout()
     plt.savefig('mc_alpha0_beta0_elev03_azi01_taxas_por_embarcacao.png',
                 dpi=200, bbox_inches='tight')
-    print(f"✓ Gráfico 1 salvo: mc_alpha0_beta0_elev03_azi01_taxas_por_embarcacao.png")
+    print("✓ Gráfico 1 salvo: mc_alpha0_beta0_elev03_azi01_taxas_por_embarcacao.png")
 
     # Figura 2: Comparação direta entre embarcações
-    fig2, axes2 = plt.subplots(2, 2, figsize=(16, 12))
+    _fig2, axes2 = plt.subplots(2, 2, figsize=(16, 12))
 
     # Gráfico 1: Todas as taxas vs Elevação
     ax1 = axes2[0, 0]
@@ -597,7 +608,7 @@ if __name__ == "__main__":
         taxas_medias.append(df_resultados_final[coluna_taxa].mean())
         tamanhos.append(specs['length'] * specs['width'])  # Área
 
-    colors = plt.cm.viridis(np.linspace(0, 1, len(nomes)))
+    colors = plt.get_cmap('viridis')(np.linspace(0, 1, len(nomes)))
     bars = ax4.bar(range(len(nomes)), taxas_medias,
                    color=colors, edgecolor='black', linewidth=1.5)
     ax4.set_xticks(range(len(nomes)))
@@ -613,24 +624,25 @@ if __name__ == "__main__":
         ax4.text(bar.get_x() + bar.get_width()/2., height,
                  f'{taxa:.1f}%', ha='center', va='bottom', fontsize=10, fontweight='bold')
 
-    plt.suptitle(f'Simulação Monte Carlo - Múltiplas Embarcações\n' +
-                 f'α=0°, β=0° | ΔElev σ=0.3°, ΔAzi σ=0.1° | {n_pontos_total} pontos | {n_simulacoes_total:,} simulações | ' +
+    plt.suptitle('Simulação Monte Carlo - Múltiplas Embarcações\n' +
+                 f'α=0°, β=0° | ΔElev σ=0.3°, ΔAzi σ=0.1° | {n_pontos_total} pontos\
+                      | {n_simulacoes_total:,} simulações | ' +
                  f'Tempo: {tempo_total_final/60:.1f} min',
                  fontsize=16, fontweight='bold')
     plt.tight_layout()
     plt.savefig('mc_alpha0_beta0_elev03_azi01_comparacao_geral.png',
                 dpi=200, bbox_inches='tight')
-    print(f"✓ Gráfico 2 salvo: mc_alpha0_beta0_elev03_azi01_comparacao_geral.png")
+    print("✓ Gráfico 2 salvo: mc_alpha0_beta0_elev03_azi01_comparacao_geral.png")
 
     plt.show()
 
     print(f"\n{'='*80}")
-    print(f"SIMULAÇÃO MONTE CARLO MASSIVA CONCLUÍDA COM SUCESSO!")
+    print("SIMULAÇÃO MONTE CARLO MASSIVA CONCLUÍDA COM SUCESSO!")
     print(f"{'='*80}")
-    print(f"\nArquivos gerados:")
-    print(f"  1. {arquivo_final}")
-    print(f"  2. {csv_final}")
-    print(f"  3. {arquivo_backup}")
-    print(f"  4. mc_alpha0_beta0_elev03_azi01_taxas_por_embarcacao.png")
-    print(f"  5. mc_alpha0_beta0_elev03_azi01_comparacao_geral.png")
+    print("\nArquivos gerados:")
+    print(f"1. {arquivo_final}")
+    print(f"2. {csv_final}")
+    print(f"3. {arquivo_backup}")
+    print("4. mc_alpha0_beta0_elev03_azi01_taxas_por_embarcacao.png")
+    print("5. mc_alpha0_beta0_elev03_azi01_comparacao_geral.png")
     print(f"\n{'='*80}")
