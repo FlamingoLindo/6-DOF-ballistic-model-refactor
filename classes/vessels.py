@@ -1,23 +1,30 @@
+"""
+_summary_
+
+Returns:
+    _type_: _description_
+"""
 import numpy as np
 import warnings
 warnings.filterwarnings('ignore')
 
 # =============================================================================
-# CLASSE EMBARCAÇÃO 
+# CLASSE EMBARCAÇÃO
 # =============================================================================
+
 
 class Vessels:
     """
     Classe que representa uma embarcação como um paralelepípedo.
     Preparada para simulações futuras envolvendo alvos móveis.
     """
-    
+
     def __init__(self, name="Embarcação", center_position=(0.0, 0.0),
                  length=100.0, width=20.0, height=30.0,
                  velocity=(0.0, 0.0)):
         """
         Inicializa uma embarcação.
-        
+
         Parâmetros:
         -----------
         name : str
@@ -39,23 +46,23 @@ class Vessels:
         self.width = width    # Largura (eixo z)
         self.height = height  # Altura (eixo y)
         self.velocity = np.array(velocity, dtype=float)  # [vx, vz]
-    
+
     def get_bounds(self, time=0.0):
         """
         Retorna os limites da embarcação no espaço 3D no instante dado.
-        
+
         Parâmetros:
         -----------
         time : float
             Tempo em segundos (para calcular posição com movimento)
-            
+
         Retorna:
         --------
         dict : limites em x, y, z
         """
         # Posição atual considerando movimento
         current_center = self.center + self.velocity * time
-        
+
         bounds = {
             'x_min': current_center[0] - self.length / 2,
             'x_max': current_center[0] + self.length / 2,
@@ -65,11 +72,11 @@ class Vessels:
             'z_max': current_center[1] + self.width / 2
         }
         return bounds
-    
+
     def check_impact(self, projectile_position, time=0.0, check_height=True):
         """
         Verifica se um projétil impactou a embarcação.
-        
+
         Parâmetros:
         -----------
         projectile_position : array-like [x, y, z]
@@ -78,25 +85,25 @@ class Vessels:
             Tempo atual
         check_height : bool
             Se True, verifica altura Y. Se False, ignora Y (útil para alvos no solo)
-            
+
         Retorna:
         --------
         bool : True se houve impacto
         """
         bounds = self.get_bounds(time)
         x, y, z = projectile_position
-        
+
         if check_height:
             impact = (bounds['x_min'] <= x <= bounds['x_max'] and
-                    bounds['y_min'] <= y <= bounds['y_max'] and
-                    bounds['z_min'] <= z <= bounds['z_max'])
+                      bounds['y_min'] <= y <= bounds['y_max'] and
+                      bounds['z_min'] <= z <= bounds['z_max'])
         else:
             # Ignorar altura Y (para alvos no solo)
             impact = (bounds['x_min'] <= x <= bounds['x_max'] and
-                    bounds['z_min'] <= z <= bounds['z_max'])
-        
+                      bounds['z_min'] <= z <= bounds['z_max'])
+
         return impact
-    
+
     def get_info(self):
         """Retorna informações formatadas sobre a embarcação."""
         info = f"\n{'='*60}\n"
