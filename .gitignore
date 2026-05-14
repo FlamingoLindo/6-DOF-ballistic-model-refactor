@@ -222,3 +222,7 @@ __marimo__/
 images/**/*
 !images/**/
 !images/**/.gitkeep
+
+excels/**/*
+!excels/**/
+!excels/**/.gitkeep
