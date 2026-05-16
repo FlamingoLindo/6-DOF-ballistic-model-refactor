@@ -1,12 +1,25 @@
 """
 _summary_
 """
+import os
+import time
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import contextlib
+from rich.progress import (Progress, SpinnerColumn, BarColumn, TextColumn,
+                           TimeElapsedColumn, TimeRemainingColumn
+                           )
+from rich.console import Console
 from classes.real_aero_dynamic_coefficients import RealAerodynamicCoefficients
 from classes.projectiles import Projectiles
 from classes.weapons import Weapons
 from classes.enviroment import Environment
 from classes.ballistic import BallisticSimulator
 from classes.vessels import Vessels
+
+
+console = Console(stderr=True)
 
 # =============================================================================
 # SIMULAÇÃO MONTE CARLO MASSIVA - MÚLTIPLAS EMBARCAÇÕES
@@ -18,13 +31,6 @@ from classes.vessels import Vessels
 def eg_monte_carlo():
     """_summary_
     """
-
-    import time
-    import datetime
-    import numpy as np
-    import pandas as pd
-    import matplotlib.pyplot as plt
-
     print("="*80)
     print("SIMULAÇÃO MONTE CARLO MASSIVA - MÚLTIPLAS EMBARCAÇÕES")
     print("ORDEM: ELEVAÇÃO DECRESCENTE (Máximo → -1.5°)")
@@ -42,10 +48,10 @@ def eg_monte_carlo():
     try:
         df_pontos = pd.read_excel(excel_selecionados, engine='openpyxl')
         print(f"✓ Arquivo carregado: {excel_selecionados}")
-        print(f"  Total de pontos: {len(df_pontos)}")
+        print(f"Total de pontos: {len(df_pontos)}")
     except FileNotFoundError:
         print(f"✗ Erro: Arquivo '{excel_selecionados}' não encontrado!")
-        print("  Execute primeiro a seleção de pontos.")
+        print("Execute primeiro a seleção de pontos.")
         exit(1)
 
     # =========================================================================
@@ -213,10 +219,10 @@ def eg_monte_carlo():
         }
     }
 
-    print(f"\n  Embarcações configuradas: {len(embarcacoes_specs)}")
+    print(f"\nEmbarcações configuradas: {len(embarcacoes_specs)}")
     for nome, specs in embarcacoes_specs.items():
         print(
-            f"    • {nome}: {specs['length']}m × {specs['width']}m - {specs['description']}")
+            f"• {nome}: {specs['length']}m × {specs['width']}m - {specs['description']}")
 
     # =========================================================================
     # GERAR TODAS AS PERTURBAÇÕES DE UMA VEZ
@@ -266,208 +272,177 @@ def eg_monte_carlo():
 
     tempo_inicio_total = time.time()
     tempo_ultimo_backup = time.time()
-    INTERVALO_BACKUP = 30 * 60  # 30 minutos em segundos
+    intervalo_backup = 30 * 60  # 30 minutos em segundos
 
     contador_sim_global = 0
+    devnull = open(os.devnull, 'w', encoding='utf-8')
 
-    for idx_ponto in range(n_pontos_total):
-        ponto = df_pontos_filtrados.iloc[idx_ponto]
+    with Progress(
+        SpinnerColumn(),
+        TextColumn("[bold cyan]{task.description}"),
+        BarColumn(),
+        TextColumn("{task.percentage:>3.0f}%"),
+        TimeElapsedColumn(),
+        TimeRemainingColumn(),
+        console=console,
+    ) as progress:
+        task_points = progress.add_task("Pontos", total=n_pontos_total)
+        task_sims = progress.add_task(
+            "Simulações", total=n_simulacoes_por_ponto)
 
-        elevacao_nominal = ponto['Elevacao_deg']
-        azimute_nominal = ponto['Azimute_otimo_deg']
-        alcance_nominal = ponto['Alcance_x_m']
-        desvio_z_nominal = ponto['Desvio_z_resultante_m']
-        numero_ponto = idx_ponto + 1
+        for idx_ponto in range(n_pontos_total):
+            ponto = df_pontos_filtrados.iloc[idx_ponto]
 
-        print(f"\n{'─'*80}")
-        print(f"PONTO {numero_ponto}/{n_pontos_total} | " +
-              f"Elevação: {elevacao_nominal:.1f}° | " +
-              f"Alcance: {alcance_nominal:.0f}m")
-        print(f"{'─'*80}")
+            elevacao_nominal = ponto['Elevacao_deg']
+            azimute_nominal = ponto['Azimute_otimo_deg']
+            alcance_nominal = ponto['Alcance_x_m']
+            desvio_z_nominal = ponto['Desvio_z_resultante_m']
+            numero_ponto = idx_ponto + 1
 
-        # Criar TODAS as embarcações no mesmo ponto de impacto nominal
-        embarcacoes_alvo = {}
-        for nome_emb, specs in embarcacoes_specs.items():
-            embarcacoes_alvo[nome_emb] = Vessels(
-                name=nome_emb,
-                center_position=(alcance_nominal, desvio_z_nominal),
-                length=specs['length'],
-                width=specs['width'],
-                height=1.0,  # Altura ignorada na verificação
-                velocity=(0.0, 0.0)
-            )
+            progress.reset(task_sims)
+            progress.update(
+                task_points, description=f"Ponto {numero_ponto}/{n_pontos_total}")
+            progress.update(
+                task_sims,   description=f"Elev {elevacao_nominal:.1f}° | {alcance_nominal:.0f}m")
 
-        # Arrays para resultados deste ponto (para cada embarcação)
-        acertos_por_embarcacao = {nome: 0 for nome in embarcacoes_specs}
-        erros_x_ponto = []
-        erros_z_ponto = []
-        distancias_erro_ponto = []
-        tempos_voo_ponto = []
-        n_validas_ponto = 0
-
-        tempo_inicio_ponto = time.time()
-
-        # Simular 400 vezes para este ponto
-        for sim in range(n_simulacoes_por_ponto):
-            # Pegar perturbações pré-geradas para os ÂNGULOS DE TIRO
-            delta_elevacao = delta_elevacao_todas[contador_sim_global]
-            delta_azimute = delta_azimute_todas[contador_sim_global]
-            contador_sim_global += 1
-
-            # Calcular ângulos perturbados
-            elevacao_perturbada = elevacao_nominal + delta_elevacao
-            azimute_perturbado = azimute_nominal + delta_azimute
-
-            # Configurar ângulos de tiro PERTURBADOS
-            weapon.set_firing_angles(
-                elevation_deg=elevacao_perturbada,
-                azimuth_deg=azimute_perturbado
-            )
-
-            try:
-                # SIMULAÇÃO COM ALPHA E BETA FIXOS EM ZERO
-                result = simulator.simulate(
-                    max_time=100.0,
-                    alpha0_deg=alpha0_deg_fixo,  # ← FIXO EM 0
-                    beta0_deg=beta0_deg_fixo,    # ← FIXO EM 0
-                    w_j0=5.0,
-                    w_k0=5.0,
-                    rtol=1e-7,  # ← ORIGINAL (máxima precisão)
-                    atol=1e-8   # ← ORIGINAL (máxima precisão)
+            # Criar TODAS as embarcações no mesmo ponto de impacto nominal
+            embarcacoes_alvo = {}
+            for nome_emb, specs in embarcacoes_specs.items():
+                embarcacoes_alvo[nome_emb] = Vessels(
+                    name=nome_emb,
+                    center_position=(alcance_nominal, desvio_z_nominal),
+                    length=specs['length'],
+                    width=specs['width'],
+                    height=1.0,  # Altura ignorada na verificação
+                    velocity=(0.0, 0.0)
                 )
 
-                # Posição final
-                x_final = result.x[-1]
-                y_final = result.y[-1]
-                z_final = result.z[-1]
-                posicao_impacto = np.array([x_final, y_final, z_final])
+            # Arrays para resultados deste ponto (para cada embarcação)
+            acertos_por_embarcacao = {nome: 0 for nome in embarcacoes_specs}
+            erros_x_ponto = []
+            erros_z_ponto = []
+            distancias_erro_ponto = []
+            tempos_voo_ponto = []
+            n_validas_ponto = 0
 
-                # Verificar acerto em CADA embarcação
-                for nome_emb, vessel in embarcacoes_alvo.items():
-                    acertou = vessel.check_impact(
-                        posicao_impacto, time=result.t[-1], check_height=False)
-                    if acertou:
-                        acertos_por_embarcacao[nome_emb] += 1
+            tempo_inicio_ponto = time.time()
 
-                # Calcular erros (independente de qual embarcação)
-                erro_x = x_final - alcance_nominal
-                erro_z = z_final - desvio_z_nominal
-                distancia_erro = np.sqrt(erro_x**2 + erro_z**2)
+            # Simular 400 vezes para este ponto
+            for _sim in range(n_simulacoes_por_ponto):
+                # Pegar perturbações pré-geradas para os ÂNGULOS DE TIRO
+                delta_elevacao = delta_elevacao_todas[contador_sim_global]
+                delta_azimute = delta_azimute_todas[contador_sim_global]
+                contador_sim_global += 1
 
-                # Armazenar
-                erros_x_ponto.append(erro_x)
-                erros_z_ponto.append(erro_z)
-                distancias_erro_ponto.append(distancia_erro)
-                tempos_voo_ponto.append(result.tempo_voo)
-                n_validas_ponto += 1
+                # Calcular ângulos perturbados
+                elevacao_perturbada = elevacao_nominal + delta_elevacao
+                azimute_perturbado = azimute_nominal + delta_azimute
 
-            except (ValueError, RuntimeError, OverflowError) as error:
-                print(f"Simulação falhou: {error}")
-                continue
+                # Configurar ângulos de tiro PERTURBADOS
+                weapon.set_firing_angles(
+                    elevation_deg=elevacao_perturbada,
+                    azimuth_deg=azimute_perturbado
+                )
 
-            # Print de progresso a cada 50 simulações
-            if (sim + 1) % 50 == 0:
-                tempo_ponto_decorrido = time.time() - tempo_inicio_ponto
-                tempo_por_sim = tempo_ponto_decorrido / (sim + 1)
-                tempo_restante_ponto = tempo_por_sim * \
-                    (n_simulacoes_por_ponto - (sim + 1))
+                try:
+                    with contextlib.redirect_stdout(devnull):
+                        # SIMULAÇÃO COM ALPHA E BETA FIXOS EM ZERO
+                        result = simulator.simulate(
+                            max_time=100.0,
+                            alpha0_deg=alpha0_deg_fixo,  # ← FIXO EM 0
+                            beta0_deg=beta0_deg_fixo,    # ← FIXO EM 0
+                            w_j0=5.0,
+                            w_k0=5.0,
+                            rtol=1e-7,  # ← ORIGINAL (máxima precisão)
+                            atol=1e-8   # ← ORIGINAL (máxima precisão)
+                        )
 
-                print(f"    [{sim+1}/{n_simulacoes_por_ponto}] " +
-                      f"Restante (ponto): {tempo_restante_ponto:.1f}s | " +
-                      f"Acertos Drone: {acertos_por_embarcacao['Drone_Sea_Baby']}")
+                    # Posição final
+                    x_final = result.x[-1]
+                    y_final = result.y[-1]
+                    z_final = result.z[-1]
+                    posicao_impacto = np.array([x_final, y_final, z_final])
 
-        tempo_total_ponto = time.time() - tempo_inicio_ponto
+                    # Verificar acerto em CADA embarcação
+                    for nome_emb, vessel in embarcacoes_alvo.items():
+                        acertou = vessel.check_impact(
+                            posicao_impacto, time=result.t[-1], check_height=False)
+                        if acertou:
+                            acertos_por_embarcacao[nome_emb] += 1
 
-        # Calcular estatísticas do ponto
-        if n_validas_ponto > 0:
-            erros_x_array = np.array(erros_x_ponto)
-            erros_z_array = np.array(erros_z_ponto)
-            distancias_array = np.array(distancias_erro_ponto)
-            tempos_array = np.array(tempos_voo_ponto)
+                    # Calcular erros (independente de qual embarcação)
+                    erro_x = x_final - alcance_nominal
+                    erro_z = z_final - desvio_z_nominal
+                    distancia_erro = np.sqrt(erro_x**2 + erro_z**2)
 
-            # Criar dicionário de resumo com taxas de acerto para cada embarcação
-            resumo_ponto = {
-                'Ponto_numero': numero_ponto,
-                'Elevacao_deg': elevacao_nominal,
-                'Azimute_deg': azimute_nominal,
-                'Alcance_m': alcance_nominal,
-                'Desvio_Z_nominal_m': desvio_z_nominal,
-                'N_simulacoes': n_simulacoes_por_ponto,
-                'N_validas': n_validas_ponto,
-                'Erro_X_medio_m': erros_x_array.mean(),
-                'Erro_X_std_m': erros_x_array.std(),
-                'Erro_X_min_m': erros_x_array.min(),
-                'Erro_X_max_m': erros_x_array.max(),
-                'Erro_Z_medio_m': erros_z_array.mean(),
-                'Erro_Z_std_m': erros_z_array.std(),
-                'Erro_Z_min_m': erros_z_array.min(),
-                'Erro_Z_max_m': erros_z_array.max(),
-                'CEP50_m': np.median(distancias_array),
-                'CEP90_m': np.percentile(distancias_array, 90),
-                'CEP95_m': np.percentile(distancias_array, 95),
-                'Tempo_voo_medio_s': tempos_array.mean(),
-                'Tempo_simulacao_s': tempo_total_ponto
-            }
+                    # Armazenar
+                    erros_x_ponto.append(erro_x)
+                    erros_z_ponto.append(erro_z)
+                    distancias_erro_ponto.append(distancia_erro)
+                    tempos_voo_ponto.append(result.tempo_voo)
+                    n_validas_ponto += 1
 
-            # Adicionar taxas de acerto para cada embarcação
-            for nome_emb, n_acertos in acertos_por_embarcacao.items():
-                taxa = (n_acertos / n_validas_ponto) * 100
-                resumo_ponto[f'Acertos_{nome_emb}'] = n_acertos
-                resumo_ponto[f'Taxa_acerto_{nome_emb}_pct'] = taxa
+                except (ValueError, RuntimeError, OverflowError):
+                    pass
 
-            resultados_resumo.append(resumo_ponto)
+                progress.advance(task_sims)
 
-            print(f"\n  ✓ Ponto concluído em {tempo_total_ponto:.1f}s")
-            print(
-                f"CEP50: {np.median(distancias_array):.2f}m |\
-                      CEP90: {np.percentile(distancias_array, 90):.2f}m")
-            print("Taxas de acerto:")
-            for nome_emb in embarcacoes_specs:
-                taxa = (
-                    acertos_por_embarcacao[nome_emb] / n_validas_ponto) * 100
-                print(
-                    f"• {nome_emb}: {taxa:.1f}%\
-                        ({acertos_por_embarcacao[nome_emb]}/{n_validas_ponto})")
+            tempo_total_ponto = time.time() - tempo_inicio_ponto
 
-        # Estimativa de tempo restante
-        tempo_total_decorrido = time.time() - tempo_inicio_total
-        pontos_restantes = n_pontos_total - (idx_ponto + 1)
-        if idx_ponto > 0:
-            tempo_medio_por_ponto = tempo_total_decorrido / (idx_ponto + 1)
-            tempo_estimado_restante = tempo_medio_por_ponto * pontos_restantes
+            # Calcular estatísticas do ponto
+            if n_validas_ponto > 0:
+                erros_x_array = np.array(erros_x_ponto)
+                erros_z_array = np.array(erros_z_ponto)
+                distancias_array = np.array(distancias_erro_ponto)
+                tempos_array = np.array(tempos_voo_ponto)
 
-            print(
-                f"\nProgresso global: {numero_ponto}/{n_pontos_total}\
-                    pontos ({(numero_ponto/n_pontos_total)*100:.1f}%)")
-            print(f"Tempo decorrido: {tempo_total_decorrido/60:.1f} min")
-            print(
-                f"Tempo estimado restante: {tempo_estimado_restante/60:.1f} min")
-            print(
-                f"Tempo total estimado: \
-                    {(tempo_total_decorrido + tempo_estimado_restante)/60:.1f} min")
+                # Criar dicionário de resumo com taxas de acerto para cada embarcação
+                resumo_ponto = {
+                    'Ponto_numero': numero_ponto,
+                    'Elevacao_deg': elevacao_nominal,
+                    'Azimute_deg': azimute_nominal,
+                    'Alcance_m': alcance_nominal,
+                    'Desvio_Z_nominal_m': desvio_z_nominal,
+                    'N_simulacoes': n_simulacoes_por_ponto,
+                    'N_validas': n_validas_ponto,
+                    'Erro_X_medio_m': erros_x_array.mean(),
+                    'Erro_X_std_m': erros_x_array.std(),
+                    'Erro_X_min_m': erros_x_array.min(),
+                    'Erro_X_max_m': erros_x_array.max(),
+                    'Erro_Z_medio_m': erros_z_array.mean(),
+                    'Erro_Z_std_m': erros_z_array.std(),
+                    'Erro_Z_min_m': erros_z_array.min(),
+                    'Erro_Z_max_m': erros_z_array.max(),
+                    'CEP50_m': np.median(distancias_array),
+                    'CEP90_m': np.percentile(distancias_array, 90),
+                    'CEP95_m': np.percentile(distancias_array, 95),
+                    'Tempo_voo_medio_s': tempos_array.mean(),
+                    'Tempo_simulacao_s': tempo_total_ponto
+                }
 
-        # =====================================================================
-        # BACKUP AUTOMÁTICO A CADA 30 MINUTOS
-        # =====================================================================
-        tempo_desde_ultimo_backup = time.time() - tempo_ultimo_backup
+                # Adicionar taxas de acerto para cada embarcação
+                for nome_emb, n_acertos in acertos_por_embarcacao.items():
+                    taxa = (n_acertos / n_validas_ponto) * 100
+                    resumo_ponto[f'Acertos_{nome_emb}'] = n_acertos
+                    resumo_ponto[f'Taxa_acerto_{nome_emb}_pct'] = taxa
 
-        if tempo_desde_ultimo_backup >= INTERVALO_BACKUP:
-            print(f"\n  {'='*76}")
-            print(
-                f"  SALVANDO BACKUP AUTOMÁTICO ({datetime.datetime.now().strftime('%H:%M:%S')})")
-            print(f"  {'='*76}")
+                resultados_resumo.append(resumo_ponto)
 
-            df_backup = pd.DataFrame(resultados_resumo)
-            df_backup.to_excel(arquivo_backup, index=False, engine='openpyxl')
-            df_backup.to_csv(arquivo_backup.replace(
-                '.xlsx', '.csv'), index=False)
+            # =====================================================================
+            # BACKUP AUTOMÁTICO A CADA 30 MINUTOS
+            # =====================================================================
+            if time.time() - tempo_ultimo_backup >= intervalo_backup:
+                df_backup = pd.DataFrame(resultados_resumo)
+                df_backup.to_excel(
+                    arquivo_backup, index=False, engine='openpyxl')
+                df_backup.to_csv(arquivo_backup.replace(
+                    '.xlsx', '.csv'), index=False)
+                tempo_ultimo_backup = time.time()
 
-            print(f"  ✓ Backup salvo: {arquivo_backup}")
-            print(
-                f"    Pontos salvos: {len(resultados_resumo)}/{n_pontos_total}")
+            # ← CHANGED: replaces the global progress print block
+            progress.advance(task_points)
 
-            tempo_ultimo_backup = time.time()
-
+    devnull.close()
     # =========================================================================
     # SALVAR RESULTADOS FINAIS
     # =========================================================================
@@ -477,12 +452,12 @@ def eg_monte_carlo():
     print("SIMULAÇÃO MASSIVA CONCLUÍDA!")
     print(f"{'='*80}")
     print(
-        f"  Tempo total: {tempo_total_final/60:.1f} minutos ({tempo_total_final/3600:.2f} horas)")
-    print(f"  Pontos simulados: {n_pontos_total}")
-    print(f"  Simulações totais: {n_simulacoes_total:,}")
-    print(f"  Tempo médio por ponto: {tempo_total_final/n_pontos_total:.1f}s")
+        f"Tempo total: {tempo_total_final/60:.1f} minutos ({tempo_total_final/3600:.2f} horas)")
+    print(f"Pontos simulados: {n_pontos_total}")
+    print(f"Simulações totais: {n_simulacoes_total:,}")
+    print(f"Tempo médio por ponto: {tempo_total_final/n_pontos_total:.1f}s")
     print(
-        f"  Tempo médio por simulação: {tempo_total_final/n_simulacoes_total:.3f}s")
+        f"Tempo médio por simulação: {tempo_total_final/n_simulacoes_total:.3f}s")
 
     print(f"\n{'='*80}")
     print("SALVANDO RESULTADOS FINAIS")
@@ -511,17 +486,17 @@ def eg_monte_carlo():
 
         print(f"\n  {nome_emb} ({specs['length']}m × {specs['width']}m):")
         print(
-            f"    Taxa de acerto média: {df_resultados_final[coluna_taxa].mean():.2f}%")
+            f"Taxa de acerto média: {df_resultados_final[coluna_taxa].mean():.2f}%")
         print(
-            f"    Taxa mínima: {df_resultados_final[coluna_taxa].min():.2f}%")
+            f"Taxa mínima: {df_resultados_final[coluna_taxa].min():.2f}%")
         print(
-            f"    Taxa máxima: {df_resultados_final[coluna_taxa].max():.2f}%")
+            f"Taxa máxima: {df_resultados_final[coluna_taxa].max():.2f}%")
         print(
-            f"    Desvio padrão: {df_resultados_final[coluna_taxa].std():.2f}%")
+            f"Desvio padrão: {df_resultados_final[coluna_taxa].std():.2f}%")
 
     print("\nCEP (independente de embarcação):")
-    print(f"    CEP50 médio: {df_resultados_final['CEP50_m'].mean():.2f}m")
-    print(f"    CEP90 médio: {df_resultados_final['CEP90_m'].mean():.2f}m")
+    print(f"CEP50 médio: {df_resultados_final['CEP50_m'].mean():.2f}m")
+    print(f"CEP90 médio: {df_resultados_final['CEP90_m'].mean():.2f}m")
 
     # =========================================================================
     # GRÁFICOS DE RESUMO

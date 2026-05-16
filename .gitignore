@@ -219,10 +219,11 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
-images/**/*
-!images/**/
-!images/**/.gitkeep
+# Comment this out since I think the outputed data is valuable to the repo
+# images/**/*
+# !images/**/
+# !images/**/.gitkeep
 
-excels/**/*
-!excels/**/
-!excels/**/.gitkeep
+# excels/**/*
+# !excels/**/
+# !excels/**/.gitkeep
